@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import { useTasks } from '../context/TaskContext'
 import TaskCard from './TaskCard'
 
-export function TaskList () {
+export function TaskList ({ done = false }) {
   const { tasks, getTaskList, loading } = useTasks()
   useEffect(() => {
-    getTaskList()
-  }, [])
+    getTaskList(done)
+  }, [done])
 
   function renderTasks () {
     if (loading) {
@@ -16,7 +16,6 @@ export function TaskList () {
     } else {
       return (
         <div>
-          <h1>TaskList</h1>
           {tasks.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}

@@ -1,39 +1,35 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { supabase } from '../supabase/client'
 import { useNavigate } from 'react-router-dom'
 
 export function Login () {
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('')
+  useEffect(() => {
+    if (supabase.auth.user()) {
+      navigate('/')
+    }
+  }, [navigate])
 
-  const handleSubmit = async (e) => {
+  async function signInWithGoogle (e) {
     e.preventDefault()
     try {
       await supabase.auth.signIn({
-        email
+        provider: 'google'
       })
     } catch (error) {
       console.log(error)
     }
   }
 
-  useEffect(() => {
-    if (supabase.auth.user()) {
-      navigate('/')
-    }
-  }, [navigate])
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Enter your email..."
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button>Send</button>
-      </form>
+    <div className="row pt-4">
+      <div className="col-md-6 offset-md-3">
+        <form className="App card card-body" onSubmit={signInWithGoogle}>
+          <h1 className="">Hello, please sign in!</h1>
+          <button className="btn btn-primary mt-2">Sign In</button>
+        </form>
+      </div>
     </div>
   )
 }
