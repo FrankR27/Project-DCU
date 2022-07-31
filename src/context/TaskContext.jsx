@@ -46,6 +46,24 @@ export const TaskContextProvider = ({ children }) => {
     }
   }
 
+  const updateTask = async (taskId, done) => {
+    setLoading(true)
+    try {
+      const user = supabase.auth.user()
+      const { error } = await supabase
+        .from('tasks')
+        .update(done)
+        .eq('userId', user.id)
+        .eq('id', taskId)
+      if (error) throw error
+      setTasks(tasks.filter((task) => task.id !== taskId))
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const deleteTask = async (taskId) => {
     setLoading(true)
     try {
@@ -53,8 +71,8 @@ export const TaskContextProvider = ({ children }) => {
       const { error } = await supabase
         .from('tasks')
         .delete()
-        .eq('id', taskId)
         .eq('userId', user.id)
+        .eq('id', taskId)
       if (error) throw error
       setTasks(tasks.filter((t) => t.id !== taskId))
     } catch (error) {
@@ -71,7 +89,8 @@ export const TaskContextProvider = ({ children }) => {
         getTaskList,
         addTask,
         loading,
-        deleteTask
+        deleteTask,
+        updateTask
       }}
     >
       {children}
